@@ -5,7 +5,7 @@ all: build
 
 # Build the binary
 build:
-	go build -o estimation-bot .
+	go build -o bin/estimation-bot .
 
 # Run with example (you'll need to provide actual URLs and API key)
 run:
@@ -16,7 +16,7 @@ run:
 
 # Clean build artifacts
 clean:
-	rm -f estimation-bot
+	rm -f bin/estimation-bot
 
 # Test the application
 test:
