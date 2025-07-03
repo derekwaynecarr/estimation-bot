@@ -18,9 +18,10 @@ import (
 
 // Config holds the application configuration
 type Config struct {
-	URLs      []string
-	APIKey    string
-	ModelName string
+	URLs       []string
+	APIKey     string
+	ModelName  string
+	PromptFile string
 }
 
 // GitHubContent represents the structure of GitHub API responses for file content
@@ -32,6 +33,26 @@ type GitHubContent struct {
 	Type        string `json:"type"`
 }
 
+// loadPromptTemplate loads a prompt template from file or returns the default template
+func loadPromptTemplate(promptFile string) (string, error) {
+	if promptFile == "" {
+		// Return default template from prompt_template.go
+		return EstimationPromptTemplate, nil
+	}
+
+	// Load custom template from file
+	content, err := os.ReadFile(promptFile)
+	if err != nil {
+		return "", fmt.Errorf("failed to read prompt template file %s: %w", promptFile, err)
+	}
+
+	if len(content) == 0 {
+		return "", fmt.Errorf("prompt template file %s is empty", promptFile)
+	}
+
+	return string(content), nil
+}
+
 func main() {
 	config := parseFlags()
 
@@ -41,6 +62,12 @@ func main() {
 
 	if config.APIKey == "" {
 		log.Fatal("Gemini API key not provided. Set GEMINI_API_KEY environment variable or use -api-key flag.")
+	}
+
+	// Load prompt template (custom or default)
+	promptTemplate, err := loadPromptTemplate(config.PromptFile)
+	if err != nil {
+		log.Fatalf("Failed to load prompt template: %v", err)
 	}
 
 	ctx := context.Background()
@@ -63,7 +90,7 @@ func main() {
 			continue
 		}
 
-		estimation, err := getEstimation(ctx, model, content)
+		estimation, err := getEstimation(ctx, model, content, promptTemplate)
 		if err != nil {
 			log.Printf("Error getting estimation for %s: %v", url, err)
 			continue
@@ -81,6 +108,7 @@ func parseFlags() Config {
 	urlsFlag := flag.String("urls", "", "Comma-delimited list of GitHub URLs to design documents")
 	apiKeyFlag := flag.String("api-key", "", "Gemini API key (can also be set via GEMINI_API_KEY env var)")
 	modelFlag := flag.String("model", "gemini-1.5-pro", "Gemini model to use")
+	promptFileFlag := flag.String("prompt-file", "", "Path to custom prompt template file (optional)")
 
 	flag.Parse()
 
@@ -100,6 +128,7 @@ func parseFlags() Config {
 	}
 
 	config.ModelName = *modelFlag
+	config.PromptFile = *promptFileFlag
 
 	return config
 }
@@ -173,8 +202,8 @@ func convertToAPIURL(url string) string {
 	return url
 }
 
-func getEstimation(ctx context.Context, model *genai.GenerativeModel, content string) (string, error) {
-	prompt := fmt.Sprintf(EstimationPromptTemplate, content)
+func getEstimation(ctx context.Context, model *genai.GenerativeModel, content string, promptTemplate string) (string, error) {
+	prompt := fmt.Sprintf(promptTemplate, content)
 
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {

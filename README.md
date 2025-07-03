@@ -82,6 +82,12 @@ You can provide your Gemini API key in two ways:
 
 # Specify API key inline
 ./estimation-bot -urls="https://github.com/owner/repo/blob/main/design.md" -api-key="your-key"
+
+# Use a custom prompt template
+./estimation-bot -urls="https://github.com/owner/repo/blob/main/design.md" -prompt-file="custom-prompt.txt"
+
+# Combine multiple options
+./estimation-bot -urls="https://github.com/owner/repo/blob/main/design.md" -model="gemini-1.5-flash" -prompt-file="startup-prompt.txt"
 ```
 
 ### Command Line Options
@@ -91,6 +97,7 @@ You can provide your Gemini API key in two ways:
 | `-urls` | Comma-delimited list of GitHub URLs to design documents | Required |
 | `-api-key` | Gemini API key (alternative to GEMINI_API_KEY env var) | - |
 | `-model` | Gemini model to use | `gemini-1.5-pro` |
+| `-prompt-file` | Path to custom prompt template file | Uses built-in template |
 
 ### Supported URL Formats
 
@@ -156,7 +163,43 @@ The implementation requires:
 
 ## Customizing the Estimation Prompt
 
-The AI prompt template is located in `prompt_template.go` and can be customized for your team's specific needs.
+You can customize the AI prompt template in two ways:
+
+### Option 1: Custom Prompt File (Recommended)
+
+Create a custom prompt template file and use the `-prompt-file` flag:
+
+```bash
+./estimation-bot -urls="https://github.com/owner/repo/blob/main/design.md" -prompt-file="my-custom-prompt.txt"
+```
+
+The prompt template file should contain your custom instructions with a `%s` placeholder where the design document content will be inserted.
+
+**Example custom prompt file:**
+```text
+You are a senior engineer at [YOUR_COMPANY] with expertise in [YOUR_DOMAIN].
+
+Consider our specific factors:
+1. **Legacy System Impact**: How will this affect our legacy systems?
+2. **Compliance Requirements**: Are there regulatory considerations?
+3. **Team Expertise**: Does the team have required skills?
+
+Use our custom story point scale:
+- 1 point: Trivial changes
+- 2 points: Small features
+- 3 points: Medium features
+- 5 points: Complex features
+- 8 points: Large features
+
+Design Document:
+%s
+
+Provide your estimation analysis.
+```
+
+### Option 2: Modify Source Code
+
+The default AI prompt template is located in `prompt_template.go` and can be modified directly:
 
 ### Key Areas to Customize:
 
@@ -165,18 +208,9 @@ The AI prompt template is located in `prompt_template.go` and can be customized 
 3. **Output Format**: Adjust the structured response format
 4. **Context**: Change the AI persona or add company-specific context
 
-### Example Customization:
+### Example Templates
 
-```go
-// Add your team's specific considerations
-const EstimationPromptTemplate = `You are a senior engineer at [YOUR_COMPANY] with expertise in [YOUR_DOMAIN]...
-
-Consider our specific factors:
-1. **Legacy System Impact**: How will this affect our legacy systems?
-2. **Compliance Requirements**: Are there regulatory considerations?
-3. **Team Expertise**: Does the team have required skills?
-...`
-```
+The repository includes `example-custom-prompt.txt` as a starting point for your custom prompts.
 
 ## Development
 
@@ -200,12 +234,13 @@ make install
 
 ```
 estimation-bot/
-├── main.go              # Main application logic
-├── prompt_template.go   # Customizable AI prompt template
-├── go.mod              # Go module definition
-├── go.sum              # Dependency checksums
-├── Makefile            # Build and development commands
-└── README.md           # This file
+├── main.go                    # Main application logic
+├── prompt_template.go         # Default AI prompt template
+├── example-custom-prompt.txt  # Example custom prompt template
+├── go.mod                     # Go module definition
+├── go.sum                     # Dependency checksums
+├── Makefile                   # Build and development commands
+└── README.md                  # This file
 ```
 
 ## Troubleshooting

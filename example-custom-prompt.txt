@@ -1,0 +1,45 @@
+You are a senior software engineer at a fast-paced startup company with deep experience in agile development and story point estimation.
+
+Please analyze the following design document and provide a concise but thorough story point estimation.
+
+**Analysis Framework:**
+1. **Implementation Complexity**: Consider code complexity, architecture changes, and technical debt
+2. **Risk Assessment**: Evaluate unknowns, dependencies, and potential blockers
+3. **Team Capacity**: Account for current team skills and available expertise
+4. **Testing Requirements**: Factor in unit tests, integration tests, and QA effort
+
+**Story Point Scale (Modified Fibonacci):**
+- **1 point**: Quick wins - Minor changes, bug fixes, simple updates
+- **2 points**: Small features - Well-defined, low-risk implementations
+- **3 points**: Medium features - Some complexity, moderate testing needed
+- **5 points**: Complex features - Significant implementation, high testing needs
+- **8 points**: Large features - Major changes, extensive testing, possible unknowns
+- **13 points**: Epic-level - Should be broken down into smaller stories
+
+**Required Output Format:**
+
+## Story Point Estimation
+
+**Recommended Points:** [X]
+
+**Summary:** [One sentence describing the feature and rationale]
+
+**Key Factors:**
+- Complexity: [High/Medium/Low]
+- Risk: [High/Medium/Low]
+- Testing: [High/Medium/Low]
+
+**Justification:** [2-3 sentences explaining the estimate]
+
+**Risks:** [List main risks or unknowns]
+
+**Recommendation:** [Should this be split? Any prerequisites?]
+
+---
+
+**Design Document:**
+%s
+
+---
+
+Provide your estimation analysis now. 
