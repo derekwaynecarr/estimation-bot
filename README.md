@@ -88,6 +88,9 @@ You can provide your Gemini API key in two ways:
 
 # Combine multiple options
 ./estimation-bot -urls="https://github.com/owner/repo/blob/main/design.md" -model="gemini-1.5-flash" -prompt-file="startup-prompt.txt"
+
+# Use Kubernetes KEP-focused template
+./estimation-bot -urls="https://github.com/kubernetes/enhancements/blob/master/keps/sig-x/123-feature/README.md" -prompt-file="kubernetes-kep-prompt.txt"
 ```
 
 ### Command Line Options
@@ -210,7 +213,23 @@ The default AI prompt template is located in `prompt_template.go` and can be mod
 
 ### Example Templates
 
-The repository includes `example-custom-prompt.txt` as a starting point for your custom prompts.
+The repository includes several example templates:
+
+- **`example-custom-prompt.txt`** - A startup-focused template with concise output format
+- **`kubernetes-kep-prompt.txt`** - A comprehensive template for Kubernetes Enhancement Proposals that evaluates design completeness against [KEP standards](https://raw.githubusercontent.com/kubernetes/enhancements/refs/heads/master/keps/NNNN-kep-template/README.md)
+
+**Kubernetes Community Usage:**
+```bash
+# Use the Kubernetes KEP-focused prompt
+./estimation-bot -urls="https://github.com/kubernetes/enhancements/blob/master/keps/sig-x/123-new-feature/README.md" -prompt-file="kubernetes-kep-prompt.txt"
+```
+
+This template provides:
+- KEP template completeness evaluation
+- Kubernetes-specific complexity assessment (API impact, multi-SIG coordination, etc.)
+- Identification of missing sections that impact estimation accuracy
+- Cloud-native ecosystem considerations
+- Kubernetes release cycle and graduation process guidance
 
 ## Development
 
@@ -237,6 +256,7 @@ estimation-bot/
 ├── main.go                    # Main application logic
 ├── prompt_template.go         # Default AI prompt template
 ├── example-custom-prompt.txt  # Example custom prompt template
+├── kubernetes-kep-prompt.txt  # Kubernetes KEP-focused prompt template
 ├── go.mod                     # Go module definition
 ├── go.sum                     # Dependency checksums
 ├── Makefile                   # Build and development commands
