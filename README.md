@@ -4,6 +4,9 @@ A command-line tool that assists with agile story point estimation by analyzing 
 
 ## Overview
 
+*This is an EXPERIMENT in prompt engineering to imagine an AI party poker participant*
+*Imagine a prompt being augmented with reference designs and story sizes and justifications*
+
 The Estimation Bot fetches design documents from GitHub URLs and uses the Gemini API to provide detailed story point estimations. It analyzes complexity, uncertainty, effort requirements, dependencies, and testing needs to suggest appropriate story points following agile estimation practices.
 
 ## Features
